@@ -21,6 +21,12 @@ preferences()
 	section("Allow Simple Control to Monitor and Control These Things...")
     {
     	input "switches", "capability.switch", title: "Which Switches?", multiple: true, required: false
+    	input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: false
+        input "thermostats", "capability.thermostat", title: "Which Thermostats?", multiple: true, required: false
+        input "doorControls", "capability.doorControl", title: "Which Door Controls?", multiple: true, required: false
+        input "colorControls", "capability.colorControl", title: "Which Color Controllers?", multiple: true, required: false
+        input "musicPlayers", "capability.musicPlayer", title: "Which Music Players?", multiple: true, required: false
+        input "switchLevels", "capability.switchLevel", title: "Which Adjustable Switches?", multiple: true, required: false
   	}
 	
 	page(name: "mainPage", title: "Simple Control Setup", content: "mainPage", refreshTimeout: 5)
@@ -361,7 +367,13 @@ def agentDiscovery(params=[:])
         }
         section("Allow Simple Control to Monitor and Control These Things...")
         {
-	    	input "switches", "capability.switch", title: "Which Switches?", multiple: true, required: false
+			input "switches", "capability.switch", title: "Which Switches?", multiple: true, required: false
+			input "locks", "capability.lock", title: "Which Locks?", multiple: true, required: false
+			input "thermostats", "capability.thermostat", title: "Which Thermostats?", multiple: true, required: false
+			input "doorControls", "capability.doorControl", title: "Which Door Controls?", multiple: true, required: false
+			input "colorControls", "capability.colorControl", title: "Which Color Controllers?", multiple: true, required: false
+			input "musicPlayers", "capability.musicPlayer", title: "Which Music Players?", multiple: true, required: false
+			input "switchLevels", "capability.switchLevel", title: "Which Adjustable Switches?", multiple: true, required: false
 	  	}
     }
 }
