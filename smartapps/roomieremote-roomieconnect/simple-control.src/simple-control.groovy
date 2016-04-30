@@ -106,11 +106,31 @@ def handleDevicesWithIDs()
     	for (devId in ids)
         {
 			def device = allDevices.find { it.id == devId }
-			if (device) {
-				if (arguments) {
-					device."$command"(*arguments)
-				} else {
-					device."$command"()
+			// Check if we have a device that responds to the specified command
+			if (device && device.hasCommand(command)) {
+				switch (command)
+				{
+					case "on":
+						device.on()
+						break
+					case "off":
+						device.off()
+						break
+					case "setLevel":
+						device.setLevel(*arguments)
+						break
+					case "playText":
+						device.playText(*arguments)
+						break
+					case "lock":
+						device.lock()
+						break
+					case "unlock":
+						device.unlock()
+						break
+					default:
+						httpError(400, "Command ${command} cannot be sent to the target device")
+						break
 				}
 				success = true
 			} else {
@@ -176,11 +196,31 @@ def updateDevice()
 		render status: 400, data: '{"msg": "command is required"}'
 	} else {
 		def device = allDevices.find { it.id == params.id }
-		if (device) {
-			if (arguments) {
-				device."$command"(*arguments)
-			} else {
-				device."$command"()
+		// Check if we have a device that responds to the specified command
+		if (device && device.hasCommand(command)) {
+			switch (command)
+			{
+				case "on":
+					device.on()
+					break
+				case "off":
+					device.off()
+					break
+				case "setLevel":
+					device.setLevel(*arguments)
+					break
+				case "playText":
+					device.playText(*arguments)
+					break
+				case "lock":
+					device.lock()
+					break
+				case "unlock":
+					device.unlock()
+					break
+				default:
+					httpError(400, "Command ${command} cannot be sent to the target device")
+					break
 			}
 			render status: 204, data: "{}"
 		} else {
