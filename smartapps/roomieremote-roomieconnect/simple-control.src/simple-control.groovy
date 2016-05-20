@@ -38,11 +38,16 @@ preferences()
 mappings {
 	path("/devices") {
     	action: [
+        	GET: "getDevices"
+        ]
+	}
+    path("/:deviceType/devices") {
+    	action: [
         	GET: "getDevices",
             POST: "handleDevicesWithIDs"
         ]
-	}
-    path("/device/:id") {
+    }
+    path("/device/:deviceType/:id") {
     	action: [
         	GET: "getDevice",
             POST: "updateDevice"
@@ -99,53 +104,40 @@ def handleDevicesWithIDs()
     //log.debug("ids: ${ids}")
     def command = data?.command
 	def arguments = data?.arguments
+	def type = params?.deviceType
+    //log.debug("device type: ${type}")
     if (command)
     {
-    	def success = false
+    	def statusCode = 404
 	    //log.debug("command ${command}, arguments ${arguments}")
     	for (devId in ids)
         {
 			def device = allDevices.find { it.id == devId }
+            //log.debug("device: ${device}")
 			// Check if we have a device that responds to the specified command
-			if (device && device.hasCommand(command)) {
-				switch (command)
-				{
-					case "on":
-						device.on()
-						break
-					case "off":
-						device.off()
-						break
-					case "setLevel":
-						device.setLevel(*arguments)
-						break
-					case "playText":
-						device.playText(*arguments)
-						break
-					case "lock":
-						device.lock()
-						break
-					case "unlock":
-						device.unlock()
-						break
-					default:
-						httpError(400, "Command ${command} cannot be sent to the target device")
-						break
-				}
-				success = true
+			if (validateCommand(device, type, command)) {
+            	if (arguments) {
+					device."$command"(*arguments)
+                }
+                else {
+                	device."$command"()
+                }
+				statusCode = 200
 			} else {
-            	//log.debug("device not found ${devId}")
+            	statusCode = 403
 			}
 		}
-        
-        if (success)
+        def responseData = "{}"
+        switch (statusCode)
         {
-        	render status: 200, data: "{}"
+        	case 403:
+            	responseData = '{"msg": "Access denied. This command is not supported by current capability."}'
+                break
+			case 404:
+            	responseData = '{"msg": "Device not found"}'
+                break
         }
-        else
-        {
-        	render status: 404, data: '{"msg": "Device not found"}'
-        }
+        render status: statusCode, data: responseData
     }
     else
     {
@@ -190,43 +182,99 @@ def updateDevice()
 	def data = request.JSON
 	def command = data?.command
 	def arguments = data?.arguments
+	def type = params?.deviceType
+    //log.debug("device type: ${type}")
 
 	//log.debug("updateDevice, params: ${params}, request: ${data}")
 	if (!command) {
 		render status: 400, data: '{"msg": "command is required"}'
 	} else {
+		def statusCode = 404
 		def device = allDevices.find { it.id == params.id }
-		// Check if we have a device that responds to the specified command
-		if (device && device.hasCommand(command)) {
-			switch (command)
-			{
-				case "on":
-					device.on()
-					break
-				case "off":
-					device.off()
-					break
-				case "setLevel":
-					device.setLevel(*arguments)
-					break
-				case "playText":
-					device.playText(*arguments)
-					break
-				case "lock":
-					device.lock()
-					break
-				case "unlock":
-					device.unlock()
-					break
-				default:
-					httpError(400, "Command ${command} cannot be sent to the target device")
-					break
+		if (device) {
+			// Check if we have a device that responds to the specified command
+			if (validateCommand(device, type, command)) {
+	        	if (arguments) {
+					device."$command"(*arguments)
+	            }
+	            else {
+	            	device."$command"()
+	            }
+				statusCode = 200
+			} else {
+	        	statusCode = 403
 			}
-			render status: 204, data: "{}"
-		} else {
-			render status: 404, data: '{"msg": "Device not found"}'
 		}
+		
+	    def responseData = "{}"
+	    switch (statusCode)
+	    {
+	    	case 403:
+	        	responseData = '{"msg": "Access denied. This command is not supported by current capability."}'
+	            break
+			case 404:
+	        	responseData = '{"msg": "Device not found"}'
+	            break
+	    }
+	    render status: statusCode, data: responseData
 	}
+}
+
+/**
+ * Validating the command passed by the user based on capability.
+ * @return boolean
+ */
+def validateCommand(device, deviceType, command) {
+	//log.debug("validateCommand ${command}")
+    def capabilityCommands = getDeviceCapabilityCommands(device.capabilities)
+    //log.debug("capabilityCommands: ${capabilityCommands}")
+	def currentDeviceCapability = getCapabilityName(deviceType)
+    //log.debug("currentDeviceCapability: ${currentDeviceCapability}")
+	if (capabilityCommands[currentDeviceCapability]) {
+		return command in capabilityCommands[currentDeviceCapability] ? true : false
+	} else {
+		// Handling other device types here, which don't accept commands
+		httpError(400, "Bad request.")
+	}
+}
+
+/**
+ * Need to get the attribute name to do the lookup. Only
+ * doing it for the device types which accept commands
+ * @return attribute name of the device type
+ */
+def getCapabilityName(type) {
+    switch(type) {
+		case "switches":
+			return "Switch"
+		case "locks":
+			return "Lock"
+        case "thermostats":
+        	return "Thermostat"
+        case "doorControls":
+        	return "Door Control"
+        case "colorControls":
+        	return "Color Control"
+        case "musicPlayers":
+        	return "Music Player"
+        case "switchLevels":
+        	return "Switch Level"
+		default:
+			return type
+	}
+}
+
+/**
+ * Constructing the map over here of
+ * supported commands by device capability
+ * @return a map of device capability -> supported commands
+ */
+def getDeviceCapabilityCommands(deviceCapabilities) {
+	def map = [:]
+	deviceCapabilities.collect {
+		map[it.name] = it.commands.collect{ it.name.toString() }
+	}
+	return map
 }
 
 def listSubscriptions()
@@ -722,7 +770,5 @@ def List getRealHubFirmwareVersions()
 {
     return location.hubs*.firmwareVersionString.findAll { it }
 }
-
-
 
 
