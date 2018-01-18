@@ -1,8 +1,9 @@
 /**
- *  WeMo Insight Switch
+ *  WeMo Dimmer Light Switch
+ *  Source: https://github.com/kris2k2/SmartThingsPublic/devicetypes/kris2k2/wemo-dimmer-light-switch.src
+ * 
+ *  Code derived from Nicolas Cerveaux/zzarbi work on the WeMo Insight Switch
  *  Source: https://github.com/zzarbi/smartthings
- *
- *  Copyright 2014 Nicolas Cerveaux
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
