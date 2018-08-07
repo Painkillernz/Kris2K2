@@ -127,7 +127,18 @@ def getWemoDimmerLightSwitches() {
 
 def installed() {
     debug("Installed with settings: ${settings}")
-    initialize()
+    unschedule()
+    unsubscribe()
+
+    if (selecteddimmerLightSwitches) {
+        adddimmerLightSwitches()
+    }
+
+    // run once subscribeToDevices
+    subscribeToDevices()
+
+    //setup cron jobs
+    runEvery5Minutes(subscribeToDevices)
 }
 
 def uninstalled() {
@@ -148,7 +159,16 @@ private removeChildDevices(devices) {
 
 def updated() {
     debug("Updated with settings: ${settings}")
-    initialize()
+    unschedule()
+    if (selecteddimmerLightSwitches) {
+        adddimmerLightSwitches()
+    }
+
+    // run once subscribeToDevices
+    subscribeToDevices()
+
+    //setup cron jobs
+    runEvery5Minutes(subscribeToDevices)
 }
 
 def resubscribe() {
@@ -204,23 +224,6 @@ def adddimmerLightSwitches() {
             d = addChildDevice("kris2k2", "Wemo Dimmer Light Switch", selectedDimmerLightSwitch.value.mac, (selectedDimmerLightSwitch?.value.hub), data)
         }
     }
-}
-
-def initialize() {
-    debug("Initialiaze")
-    // remove location subscription afterwards
-    unsubscribe()
-    state.subscribe = false
-
-    if (selecteddimmerLightSwitches) {
-        adddimmerLightSwitches()
-    }
-
-    // run once subscribeToDevices
-    subscribeToDevices()
-
-    //setup cron jobs
-    runEvery5Minutes(subscribeToDevices)
 }
 
 def locationHandler(evt) {
