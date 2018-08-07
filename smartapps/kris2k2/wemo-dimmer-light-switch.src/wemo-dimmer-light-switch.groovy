@@ -256,7 +256,7 @@ def locationHandler(evt) {
 
             if (deviceChangedValues) {
                 def children = getChildDevices()
-                children.each {
+                children.each { it ->
                     if (it.getDeviceDataByName("mac") == parsedEvent.mac) {
                         it.subscribe(parsedEvent.ip, parsedEvent.port)
                     }
