@@ -32,9 +32,9 @@ preferences {
 }
 
 private debug(data) {
-    if(appSettings.debug == "true"){
+    //if(appSettings.debug == "true"){
         log.debug(data)
-    }
+    //}
 }
 
 private discoverAllWemoTypes() {
@@ -220,7 +220,7 @@ def initialize() {
     subscribeToDevices()
 
     //setup cron jobs
-    schedule("10 * * * * ?", "subscribeToDevices")
+    runEvery5Minutes(subscribeToDevices)
 }
 
 def locationHandler(evt) {
