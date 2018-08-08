@@ -67,7 +67,7 @@ def firstPage() {
         
         debug("Subscribe to location")
         // subscribe to answers from HUB
-        subscribe(location, null, locationHandler, [filterEvents:false])
+        subscribe(location, "ssdpTerm.urn:Belkin:service:basicevent:1", locationHandler)
 
         //ssdp request every 25 seconds
         if((refreshCount % 5) == 0) {
@@ -223,7 +223,7 @@ def adddimmerLightSwitches() {
             debug("Mac: " + selectedDimmerLightSwitch.value.mac)
             debug("Hub: " + (selectedDimmerLightSwitch?.value.hub))
             debug("Data: " + data)
-            d = addChildDevice("kris2k2", "Wemo Dimmer Light Switch", selectedDimmerLightSwitch.value.mac, (selectedDimmerLightSwitch?.value.hub), data)
+            d = addChildDevice("kris2k2", "Wemo Dimmer Light Switch", selectedDimmerLightSwitch.value.mac, selectedDimmerLightSwitch?.value.hub, data)
         }
     }
 }
