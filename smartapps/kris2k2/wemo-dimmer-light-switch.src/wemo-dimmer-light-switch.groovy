@@ -64,12 +64,10 @@ def firstPage() {
 
         debug("REFRESH COUNT :: ${refreshCount}")
 
-        if(!state.subscribe) {
-            debug("Subscribe to location")
-            // subscribe to answers from HUB
-            subscribe(location, null, locationHandler, [filterEvents:false])
-            state.subscribe = true
-        }
+        
+        debug("Subscribe to location")
+        // subscribe to answers from HUB
+        subscribe(location, null, locationHandler, [filterEvents:false])
 
         //ssdp request every 25 seconds
         if((refreshCount % 5) == 0) {
@@ -196,15 +194,18 @@ def subscribeToDevices() {
 }
 
 def adddimmerLightSwitches() {
+    debug("adddimmerLightSwitches()")
     def dimmerLightSwitches = getWemoDimmerLightSwitches()
-
+    debug("dimmerLightSwitches: ${dimmerLightSwitches}")
     selecteddimmerLightSwitches.each { dni ->
-        def selectedDimmerLightSwitch = dimmerLightSwitches.find { it.value.mac == dni } ?: dimmerLightSwitches.find { "${it.value.ip}:${it.value.port}" == dni }
+        def selectedDimmerLightSwitch = dimmerLightSwitches.find { 
+            debug("it:${it}")
+            it?.value?.mac == dni }
 
         def d
         if (selectedDimmerLightSwitch) {
             d = getChildDevices()?.find {
-                it.dni == selectedDimmerLightSwitch.value.mac || it.device.getDataValue("mac") == selectedDimmerLightSwitch.value.mac
+                it?.dni == selectedDimmerLightSwitch?.value?.mac || it?.device?.getDataValue("mac") == selectedDimmerLightSwitch?.value?.mac
             }
         }
 
