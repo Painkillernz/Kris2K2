@@ -201,12 +201,13 @@ def adddimmerLightSwitches() {
         def selectedDimmerLightSwitch = dimmerLightSwitches.find { 
             debug("it:${it}")
             it?.value?.mac == dni }
-
+        debug("selectedDimmerLightSwitch:${selectedDimmerLightSwitch}")
         def d
         if (selectedDimmerLightSwitch) {
             d = getChildDevices()?.find {
                 it?.dni == selectedDimmerLightSwitch?.value?.mac || it?.device?.getDataValue("mac") == selectedDimmerLightSwitch?.value?.mac
             }
+            debug("FOUND D:${d}")
         }
 
         if (!d) {
