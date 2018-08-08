@@ -253,15 +253,16 @@ def locationHandler(evt) {
             def d = dimmerLightSwitches."${parsedEvent.ssdpUSN.toString()}"
             debug("parsedEvent:${parsedEvent} d:${d}")
             
-            if(d.ip != parsedEvent.ip || d.port != parsedEvent.port) {
+            //if(d.ip != parsedEvent.ip || d.port != parsedEvent.port) {
                 d.ip = parsedEvent.ip
                 d.port = parsedEvent.port
                 def child = getChildDevice(parsedEvent.mac)
+                debug("child:${child}")
                 if (child) {
                     debug("triggering subscribe on: ${parsedEvent.mac} ${parsedEvent.ip} ${parsedEvent.port}")
                    child.subscribe(parsedEvent.ip, parsedEvent.port)   
                 }
-            }
+            //}
         }
     } else if (parsedEvent.headers && parsedEvent.body) {
         def headerString = new String(parsedEvent.headers.decodeBase64())
