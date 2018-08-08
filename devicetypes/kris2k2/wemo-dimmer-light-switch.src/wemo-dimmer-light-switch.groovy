@@ -270,6 +270,10 @@ def subscribe() {
     subscribe(getHostAddress())
 }
 
+def sync(ip, port) {
+    subscribe(ip, port)
+}
+
 def subscribe(ip, port) {
     def existingIp = getDataValue("ip")
     def existingPort = getDataValue("port")
