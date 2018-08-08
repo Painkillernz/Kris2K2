@@ -253,8 +253,9 @@ def refresh() {
 }
 
 def subscribe(hostAddress) {
-    debug("Executing 'subscribe()'")
+    debug("Executing 'subscribe(${hostAddress})'")
     def address = getCallBackAddress()
+	debug("hostAddress: ${hostAddress}")
     new physicalgraph.device.HubAction("""SUBSCRIBE /upnp/event/basicevent1 HTTP/1.1
 HOST: ${hostAddress}
 CALLBACK: <http://${address}/>
@@ -267,6 +268,7 @@ User-Agent: CyberGarage-HTTP/1.0
 }
 
 def subscribe() {
+    debug("calling getHostAddress()")
     subscribe(getHostAddress())
 }
 
