@@ -183,6 +183,7 @@ def refreshDevices() {
 
 def subscribeToDevices() {
     debug("subscribeToDevices() called")
+    // Need to discover each subscribe call or updated ports wont be caught!
     discoverAllWemoTypes()
     def devices = getAllChildDevices()
     devices.each { d ->
@@ -205,7 +206,6 @@ def adddimmerLightSwitches() {
             d = getChildDevices()?.find {
                 it?.dni == selectedDimmerLightSwitch?.value?.mac || it?.device?.getDataValue("mac") == selectedDimmerLightSwitch?.value?.mac
             }
-            debug("FOUND D:${d}")
         }
 
         if (!d) {
@@ -251,7 +251,7 @@ def locationHandler(evt) {
             def d = dimmerLightSwitches."${parsedEvent.ssdpUSN.toString()}"
             debug("parsedEvent:${parsedEvent} d:${d}")
             
-            //if(d.ip != parsedEvent.ip || d.port != parsedEvent.port) {
+            if(d.ip != parsedEvent.ip || d.port != parsedEvent.port) {
                 d.ip = parsedEvent.ip
                 d.port = parsedEvent.port
                 def child = getChildDevice(parsedEvent.mac)
@@ -260,7 +260,7 @@ def locationHandler(evt) {
                     debug("triggering subscribe on: ${parsedEvent.mac} ${parsedEvent.ip} ${parsedEvent.port}")
                    child.subscribe(parsedEvent.ip, parsedEvent.port)   
                 }
-            //}
+            }
         }
     } else if (parsedEvent.headers && parsedEvent.body) {
         def headerString = new String(parsedEvent.headers.decodeBase64())
