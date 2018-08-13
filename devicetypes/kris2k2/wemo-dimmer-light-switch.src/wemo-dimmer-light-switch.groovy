@@ -253,9 +253,8 @@ def refresh() {
 }
 
 def subscribe(hostAddress) {
-    debug("Executing 'subscribe(${hostAddress})'")
+    debug("Executing subscribe(${hostAddress})")
     def address = getCallBackAddress()
-	debug("hostAddress: ${hostAddress}")
     new physicalgraph.device.HubAction("""SUBSCRIBE /upnp/event/basicevent1 HTTP/1.1
 HOST: ${hostAddress}
 CALLBACK: <http://${address}/>
@@ -270,10 +269,6 @@ User-Agent: CyberGarage-HTTP/1.0
 def subscribe() {
     debug("calling getHostAddress()")
     subscribe(getHostAddress())
-}
-
-def sync(ip, port) {
-    subscribe(ip, port)
 }
 
 def subscribe(ip, port) {
@@ -292,7 +287,7 @@ def subscribe(ip, port) {
 }
 
 def resubscribe() {
-    debug("Executing 'resubscribe()'")
+    debug("Executing resubscribe()")
     def sid = getDeviceDataByName("subscriptionId")
 
     new physicalgraph.device.HubAction("""SUBSCRIBE /upnp/event/basicevent1 HTTP/1.1
