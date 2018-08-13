@@ -128,10 +128,6 @@ def installed() {
     unschedule()
     unsubscribe()
 
-    if (selecteddimmerLightSwitches) {
-        adddimmerLightSwitches()
-    }
-
     // run once subscribeToDevices
     subscribeToDevices()
 
@@ -158,9 +154,6 @@ private removeChildDevices(devices) {
 def updated() {
     debug("Updated with settings: ${settings}")
     unschedule()
-    if (selecteddimmerLightSwitches) {
-        adddimmerLightSwitches()
-    }
 
     // run once subscribeToDevices
     subscribeToDevices()
@@ -186,6 +179,9 @@ def refreshDevices() {
 
 def subscribeToDevices() {
     debug("subscribeToDevices() called")
+    if (selecteddimmerLightSwitches) {
+        adddimmerLightSwitches()
+    }
     def devices = getAllChildDevices()
     devices.each { d ->
         debug('Call subscribe on '+d.id)
