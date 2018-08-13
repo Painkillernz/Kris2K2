@@ -196,9 +196,7 @@ def adddimmerLightSwitches() {
     debug("adddimmerLightSwitches()")
     def dimmerLightSwitches = getWemoDimmerLightSwitches()
     selecteddimmerLightSwitches.each { dni ->
-        def selectedDimmerLightSwitch = dimmerLightSwitches.find { 
-            debug("it:${it}")
-            it?.value?.mac == dni }
+        def selectedDimmerLightSwitch = dimmerLightSwitches.find { it?.value?.mac == dni }
         def d
         if (selectedDimmerLightSwitch) {
             d = getChildDevices()?.find {
