@@ -257,7 +257,7 @@ def locationHandler(evt) {
                 def child = getChildDevice(parsedEvent.mac)
                 debug("child:${child}")
                 if (child) {
-                    debug("triggering subscribe on: ${parsedEvent.mac} ${parsedEvent.ip} ${parsedEvent.port}")
+                   debug("triggering subscribe on: ${parsedEvent.mac} ${parsedEvent.ip} ${parsedEvent.port}")
                    child.subscribe(parsedEvent.ip, parsedEvent.port)   
                 }
             }
