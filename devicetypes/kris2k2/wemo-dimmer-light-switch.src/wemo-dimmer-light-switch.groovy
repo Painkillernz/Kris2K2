@@ -72,9 +72,9 @@ metadata {
 }
 
 private debug(data){
-    //if(parent.appSettings.debug == "true"){
+    if(parent.appSettings.debug == "true"){
         log.debug(data)
-    //}
+    }
 }
 
 // parse events into attributes
