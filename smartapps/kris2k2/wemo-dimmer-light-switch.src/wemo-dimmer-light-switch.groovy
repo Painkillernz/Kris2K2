@@ -32,9 +32,9 @@ preferences {
 }
 
 private debug(data) {
-    //if(appSettings.debug == "true"){
+    if(appSettings.debug == "true"){
         log.debug(data)
-    //}
+    }
 }
 
 private discoverAllWemoTypes() {
