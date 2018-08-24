@@ -64,10 +64,12 @@ def firstPage() {
 
         debug("REFRESH COUNT :: ${refreshCount}")
 
-        
-        debug("Subscribe to location")
-        // subscribe to answers from HUB
-        subscribe(location, "ssdpTerm.urn:Belkin:service:basicevent:1", locationHandler)
+        if (!state.subscribe) { 
+          debug("Subscribe to location")
+          // subscribe to answers from HUB
+          subscribe(location, "ssdpTerm.urn:Belkin:service:basicevent:1", locationHandler, [filterEvents:false])
+          state.subscribe = true
+        }
 
         //ssdp request every 25 seconds
         if((refreshCount % 5) == 0) {
